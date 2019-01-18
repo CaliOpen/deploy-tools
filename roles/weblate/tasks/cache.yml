@@ -1,16 +1,16 @@
 ---
-- name: download node exporter
+- name: download redis
   unarchive:
     src: http://download.redis.io/releases/redis-5.0.3.tar.gz
     dest: /tmp
     remote_src: yes
 
-- name: compile
+- name: compile redis
   command: make
   args:
     chdir: /tmp/redis-5.0.3
 
-- name: move redis binary
+- name: move redis binary to path
   command: mv /tmp/redis-5.0.3 /usr/bin/
 
 - name: create redis dir
