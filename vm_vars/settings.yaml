@@ -1,0 +1,9 @@
+# VM configuration
+
+##Common
+os_image: Debian 9
+datacenter: FR-SD3
+
+#SSH keys
+#You can give a key id
+gandi_ssh_key_id: 43083

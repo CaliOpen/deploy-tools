@@ -1,0 +1,7 @@
+# IPS
+gw_private_ip: "{{ hostvars['gw1']['private_ips'][0] }}"
+
+# Passwords
+
+PSQL_weblate_user: ""
+PSQL_weblate_password: ""

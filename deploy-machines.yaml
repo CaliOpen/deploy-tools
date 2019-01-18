@@ -1,0 +1,40 @@
+- name: deploy machines
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+    - "vm_vars/credentials.yaml"
+    - "vm_vars/settings.yaml"
+
+  tasks:
+
+  - name: weblate machine
+    gandi_vps:
+      gandi_api_key: "{{ gandi_api_key }}"
+      name: trad1
+      machine_type: custom
+      image: "{{ os_image }}"
+      datacenter: "{{ datacenter }}"
+      sshkey_ids:
+        - "{{ gandi_ssh_key_id }}"
+      cores: 2
+      memory: 2048
+      disk: 5
+      interfaces: {'publics': [{'ipv4': 'auto'}] }
+      state: running
+      farm: tools
+    tags: weblate
+    async: 7200
+    poll: 0
+    register: weblate_creation
+
+  - name: wait for weblate creation
+    async_status:
+      jid: "{{ item.ansible_job_id }}"
+    register: jobs
+    until: jobs.finished
+    delay: 10
+    retries: 300
+    with_items:
+      - "{{ weblate_creation }}"
