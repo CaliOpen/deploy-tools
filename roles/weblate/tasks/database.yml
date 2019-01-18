@@ -1,0 +1,11 @@
+---
+- name: install dependencies
+  apt: package={{ item }} state=installed update_cache=yes
+  with_items:
+    - postgresql
+
+# postgres psql postgres -c "\password {{ PSQL_weblate_password }}"
+
+# postgres createuser -D -P weblate
+
+# postgres createdb -O weblate weblate
