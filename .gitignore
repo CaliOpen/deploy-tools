@@ -1,0 +1,5 @@
+vm_vars/credentials.yaml
+.vault_pass.txt
+*.retry
+*.swp
+.gandi.config.yaml
