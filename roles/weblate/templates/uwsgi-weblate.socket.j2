@@ -1,0 +1,11 @@
+[Unit]
+Description=Socket for uWSGI app weblate
+
+[Socket]
+ListenStream=/var/run/uwsgi/weblate.sock
+SocketUser=weblate
+SocketGroup=weblate
+SocketMode=0770
+
+[Install]
+WantedBy=sockets.target
