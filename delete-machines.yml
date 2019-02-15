@@ -1,0 +1,31 @@
+- name: delete deployment
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+    - "vm_vars/credentials.yaml"
+    - "vm_vars/settings.yaml"
+
+  tasks:
+  - name: delete machines
+    gandi_vps:
+      gandi_api_key: "{{ gandi_api_key }}"
+      name: "{{ item }}"
+      datacenter: "{{ datacenter }}"
+      state: deleted
+    with_items:
+      - trad1
+    async: 7200
+    poll: 0
+    register: node_deletion
+
+  - name: wait for deletion
+    async_status:
+      jid: "{{ item.ansible_job_id }}"
+    register: jobs
+    until: jobs.finished
+    delay: 10
+    retries: 300
+    with_items:
+      - "{{ node_deletion.results }}"

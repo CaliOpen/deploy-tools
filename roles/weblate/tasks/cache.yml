@@ -1,0 +1,25 @@
+---
+- name: download redis
+  unarchive:
+    src: http://download.redis.io/releases/redis-5.0.3.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: compile redis
+  command: make
+  args:
+    chdir: /tmp/redis-5.0.3
+
+- name: move redis binary to path
+  command: mv /tmp/redis-5.0.3 /usr/bin/
+
+- name: create redis dir
+  file:
+    path: /etc/redis
+    state: directory
+
+- name: copy config file
+  template:
+    src: redis.conf.j2
+    dest: "/etc/redis/redis.conf"
+

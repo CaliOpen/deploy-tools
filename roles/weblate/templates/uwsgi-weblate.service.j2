@@ -1,0 +1,17 @@
+[Unit]
+Description=weblate uWSGI app
+After=syslog.target
+
+[Service]
+ExecStart={{ weblate_dir }}/bin/uwsgi \
+        --ini {{ weblate_dir }}/lib/python3.5/site-packages/weblate/uwsgi.ini \
+        --wsgi-file {{ weblate_dir }}/lib/python3.5/site-packages/weblate/wsgi.py
+        --enable-threads
+User=weblate
+Group=weblate
+Restart=on-failure
+KillSignal=SIGQUIT
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

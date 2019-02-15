@@ -1,0 +1,8 @@
+- hosts: trad1
+  become: yes
+  remote_user: root
+  roles:
+    - common
+    - weblate
+  tags:
+    - tool

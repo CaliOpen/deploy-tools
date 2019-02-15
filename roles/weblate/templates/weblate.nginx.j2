@@ -1,0 +1,56 @@
+server {
+    listen 80 default_server;
+    server_name _;
+    return 301 https://weblate.caliopen.org;
+}
+
+server {
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name weblate.caliopen.org;
+    root /usr/share/weblate;
+
+    ssl_certificate     /etc/nginx/certificates/caliopen.org.crt;
+    ssl_certificate_key /etc/nginx/certificates/caliopen.org.key;
+    ssl_prefer_server_ciphers On;
+    ssl_protocols TLSv1.1 TLSv1.2;
+    ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:RSA+AESGCM:RSA+AES:!aNULL:!MD5:!DSS;
+    ssl_session_cache shared:SSL:10m;
+
+    if ($host !~* ^(wbelate.caliopen.org)$ ) {
+        return 444;
+    }
+
+    location ~ ^/favicon.ico$ {
+        # DATA_DIR/static/favicon.ico
+        alias /home/weblate/weblate-env/lib/python3.5/site-packages/data/static/favicon.ico;
+        expires 30d;
+    }
+
+    location ~ ^/robots.txt$ {
+        # DATA_DIR/static/robots.txt
+        alias /home/weblate/weblate-env/lib/python3.5/site-packages/data/static/robots.txt;
+        expires 30d;
+    }
+
+    location /static/ {
+        # DATA_DIR/static/
+        alias /home/weblate/weblate-env/lib/python3.5/site-packages/data/static/;
+        expires 30d;
+    }
+
+    location /media/ {
+        # DATA_DIR/media/
+        alias /home/weblate/weblate-env/lib/python3.5/site-packages/data/media/;
+        expires 30d;
+    }
+
+    location / {
+        include uwsgi_params;
+        # Needed for long running operations in admin interface
+        uwsgi_read_timeout 3600;
+        # Adjust based to uwsgi configuration:
+        uwsgi_pass unix:///var/run/uwsgi/weblate.sock;
+    }
+}

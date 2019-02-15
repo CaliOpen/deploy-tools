@@ -1,0 +1,40 @@
+- name: install dependencies
+  apt:
+    package: {{ item }}
+    state: installed
+    update_cache: yes
+  with_items:
+    - nginx
+    - uwsgi-plugin-python3
+
+# - name: install uwsgi with pip
+#   pip:
+#     name:
+#       - uwsgi
+#     virtualenv: ~/weblate-env
+
+- name: Create socket for uwsgi/nginx communication
+  template:
+    src: uwsgi-weblate.socket.j2
+    dest: /etc/systemd/system/uwsgi-weblate.socket
+
+- name: Create service for uwsgi
+  template:
+    src: uwsgi-weblate.service.j2
+    dest: /etc/systemd/system/uwsgi-weblate.service
+
+- name: copy nginx site
+  template:
+    src: weblate.nginx.j2
+    dest: /etc/nginx/sites-available/weblate
+  
+- name: create symlink for weblate site
+  file:
+    src: /etc/nginx/sites-available/weblate
+    dest: /etc/nginx/sites-enabled/weblate
+    state: link
+
+- name: reload nginx
+  service:
+    name: nginx
+    state: reloaded

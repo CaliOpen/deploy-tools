@@ -1,0 +1,24 @@
+---
+- name: install dependencies
+  apt:
+    package: {{ item }}
+    state: installed
+    update_cache: yes
+  with_items:
+    - postgresql
+
+- name: set password
+  shell: psql postgres -c "alter user postgres with password '{{ PSQL_master_password }}'"
+  become: yes
+  become_user: postgres
+
+- name: create user weblate
+  postgresql_user:
+    name: weblate
+    password: "{{ PSQL_weblate_password }}"
+    role_attr_flags: "NOCREATEDB,NOCREATEROLE,NOSUPERUSER"
+
+- name: create db
+  postgresql_db:
+    name: weblate
+    owner: weblate

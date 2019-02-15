@@ -1,0 +1,51 @@
+- name: install dependencies
+  apt:
+    package: {{ item }}
+    state: installed
+    update_cache: yes
+  with_items:
+    - libxml2-dev
+    - libxslt-dev
+    - libfreetype6-dev
+    - libjpeg-dev
+    - libz-dev
+    - libyaml-dev
+    - python3-dev 
+    - python3-pip
+    - python3-virtualenv
+    - gcc
+    - make
+    - git
+    - python3-requests-oauthlib
+    - python3-six
+    - python3-openid
+
+- name: Update virtualenv
+  command: pip3 install --upgrade virtualenv
+
+- name: create virtualenv
+  command: virtualenv {{ weblate_dir }}
+
+- include: database.yml
+
+- include: cache.yml
+
+- name: install weblate and optional packages
+  pip:
+    name:
+      - Weblate
+      - pytz
+      - python-bidi
+      - PyYAML
+      - pyuca
+      - psycopg2-binary
+      - django-redis
+      - hiredis
+    virtualenv: ~/weblate-env
+
+- name: Copy weblate configuration
+  template:
+    src: settings.py.j2
+    dest: "~/weblate-env/lib/python2.7/site-packages/weblate/settings.py"
+
+- include: webserver.yml
