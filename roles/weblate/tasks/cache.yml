@@ -14,7 +14,9 @@
   command: mv /tmp/redis-5.0.3 /usr/bin/
 
 - name: create redis dir
-  file: path=/etc/redis state=directory
+  file:
+    path: /etc/redis
+    state: directory
 
 - name: copy config file
   template:
