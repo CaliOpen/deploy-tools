@@ -27,28 +27,22 @@ from logging.handlers import SysLogHandler
 # Django settings for Weblate project.
 #
 
-# XXX set to false
-DEBUG = True
+DEBUG = False
 
 ADMINS = (
-    ('Your Name', 'your_email@example.com'),
+    ('{{ weblate_admin }}', '{{ admin_email }}'),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        # Database engine
         'ENGINE': 'django.db.backends.postgresql',
-        # Database name
         'NAME': 'weblate',
-        # Database user
         'USER': '{{ PSQL_weblate_user }}',
-        # Database password
         'PASSWORD': '{{ PSQL_weblate_password }}',
-        # Set to empty string for localhost
-        'HOST': '',
-        # Set to empty string for default
+        #Leaving it empty defaults to localhost peer auth
+        'HOST': 'localhost',
         'PORT': '',
     }
 }
@@ -62,6 +56,7 @@ DATA_DIR = os.path.join(BASE_DIR, 'data')
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
+#TIME_ZONE = 'Europe/Paris'
 TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
@@ -605,6 +600,7 @@ SESSION_COOKIE_SECURE = ENABLE_HTTPS
 SECURE_SSL_REDIRECT = ENABLE_HTTPS
 # Session cookie age (in seconds)
 SESSION_COOKIE_AGE = 1209600
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 # Some security headers
 SECURE_BROWSER_XSS_FILTER = True
@@ -716,30 +712,33 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 #     'weblate.addons.git.GitSquashAddon',
 # )
 
+EMAIL_HOST = '{{ EMAIL_HOST }}'
+EMAIL_HOST_PASSWORD = '{{ EMAIL_HOST_PASSWORD }}'
+EMAIL_HOST_USER = '{{ EMAIL_HOST_USER }}'
+EMAIL_PORT = '{{ EMAIL_PORT }}'
+
 # E-mail address that error messages come from.
-SERVER_EMAIL = 'noreply@example.com'
+SERVER_EMAIL = 'noreply@weblate.com'
 
 # Default email address to use for various automated correspondence from
 # the site managers. Used for registration emails.
-DEFAULT_FROM_EMAIL = 'noreply@example.com'
+DEFAULT_FROM_EMAIL = 'noreply@weblate.com'
 
 # List of URLs your site is supposed to serve
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.caliopen.org']
 
 # Example configuration for caching
 CACHES = {
 #Recommended redis + hiredis:
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        #'LOCATION': 'redis://127.0.0.1:6379/0',
-        # If redis is running on same host as Weblate, you might
-        # want to use unix sockets instead:
         'LOCATION': 'unix:///var/run/redis/redis.sock?db=0',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'PARSER_CLASS': 'redis.connection.HiredisParser',
         }
     },
+
 }
 
 # REST framework settings for API
@@ -771,14 +770,14 @@ REST_FRAMEWORK = {
 }
 
 # Example for restricting access to logged in users
-# LOGIN_REQUIRED_URLS = (
+LOGIN_REQUIRED_URLS = (
 #     r'/(.*)$',
-# )
+)
 
 # In such case you will want to include some of the exceptions
-# LOGIN_REQUIRED_URLS_EXCEPTIONS = (
+LOGIN_REQUIRED_URLS_EXCEPTIONS = (
 #    r'/accounts/(.*)$',        # Required for login
-#    r'/admin/login/(.*)$',     # Required for admin login
+    r'/admin/login/(.*)$',     # Required for admin login
 #    r'/static/(.*)$',          # Required for development mode
 #    r'/widgets/(.*)$',         # Allowing public access to widgets
 #    r'/data/(.*)$',            # Allowing public access to data exports
@@ -788,16 +787,16 @@ REST_FRAMEWORK = {
 #    r'/js/i18n/$',             # Javascript localization
 #    r'/contact/$',             # Optional for contact form
 #    r'/legal/(.*)$',           # Optional for legal app
-# )
+)
 
 # Celery worker configuration for testing
-CELERY_TASK_ALWAYS_EAGER = True
-CELERY_BROKER_URL = 'memory://'
-CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+#CELERY_TASK_ALWAYS_EAGER = True
+#CELERY_BROKER_URL = 'memory://'
+#CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 # Celery worker configuration for production
-# CELERY_TASK_ALWAYS_EAGER = False
-# CELERY_BROKER_URL = 'redis://localhost:6379'
-# CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_TASK_ALWAYS_EAGER = False
+CELERY_BROKER_URL = 'redis+socket:///var/run/redis/redis.sock'
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 # Celery settings, it is not recommended to change these
 CELERY_WORKER_PREFETCH_MULTIPLIER = 0
