@@ -1,7 +1,26 @@
 # IPS
 gw_private_ip: "{{ hostvars['gw1']['private_ips'][0] }}"
 
-# Passwords
+weblate_dir: ""
 
-PSQL_weblate_user: ""
+# EMAIL CONFIGURATION
+EMAIL_HOST: ""
+EMAIL_HOST_PASSWORD: ""
+EMAIL_HOST_USER: ""
+EMAIL_PORT: ""
+# E-mail address that error messages come from.
+SERVER_EMAIL = ""
+# Default email address to use for various automated correspondence from
+# the site managers. Used for registration emails.
+DEFAULT_FROM_EMAIL = ""
+
+# WEBLATE ADMIN, FOR ERRORS AND NOTIFICATIONS
+weblate_admin: ""
+admin_mail: ""
+
+# PASSWORDS
 PSQL_weblate_password: ""
+PSQL_master_password: ""
+
+# password for "weblate" linux user
+weblate_user_pass: ""
